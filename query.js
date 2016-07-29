@@ -7,14 +7,14 @@ var updateFreSec = 10000;
 
 // set timeout
 queryResult();
-//var tid = setTimeout(queryTimeoutAdp, updateFreSec);
-//function queryTimeoutAdp() {
-//  queryResult();
-//  tid = setTimeout(queryTimeoutAdp, updateFreSec); // repeat myself
-//}
-//function abortTimer() { // to be called when you want to stop the timer
-//  clearTimeout(tid);
-//}
+var tid = setTimeout(queryTimeoutAdp, updateFreSec);
+function queryTimeoutAdp() {
+  queryResult();
+  tid = setTimeout(queryTimeoutAdp, updateFreSec); // repeat myself
+}
+function abortTimer() { // to be called when you want to stop the timer
+  clearTimeout(tid);
+}
 
 function queryResult() {
   $.ajax({
@@ -32,13 +32,14 @@ function queryResult() {
       var overKillMaxBonus = data.feed.entry[0].gsx$overkill總分數.$t;
       var overKillBonus = data.feed.entry[0].gsx$overkill分數.$t;
       var overKillBonusRate = (overKillBonus / overKillMaxBonus) * 100;
+      var scheduleText = data.feed.entry[0].gsx$狀況一.$t;
         
       // 測試用
 //      alert("OK "+data.feed.entry[0].gsx$boss剩餘血.$t);
 //      console.log(data);
         
       // 顯示
-      display_data(bossMaxHp, bossHp, bossHpRate, overKillMaxBonus, overKillBonus, overKillBonusRate);
+      display_data(scheduleText, bossMaxHp, bossHp, bossHpRate, overKillMaxBonus, overKillBonus, overKillBonusRate);
       
     },
     error: function(data){
@@ -48,8 +49,9 @@ function queryResult() {
   });
 }
 
-function display_data(bossMaxHp, bossHp, bossHpRate, overKillMaxBonus, overKillBonus, overKillBonusRate) {
+function display_data(scheduleText, bossMaxHp, bossHp, bossHpRate, overKillMaxBonus, overKillBonus, overKillBonusRate) {
   // 介面對應
+  var mScheduleText = document.getElementById('schedule-text');
   var mModeText = document.getElementById('mode-text');
   var mBossScoreArea = document.getElementById('boss-hp-area');
   var mBossHpRate = document.getElementById('boss-hp-rate');
@@ -67,7 +69,7 @@ function display_data(bossMaxHp, bossHp, bossHpRate, overKillMaxBonus, overKillB
   mOverkillBonus.innerHTML = overKillBonus;
   $('#overkill-bonus-area .progressbar').width(overKillBonusRate+"%");
   
-  
+  mScheduleText.innerHTML = scheduleText;
   // OverKill
   if(bossHp == 0) {
     mModeText.innerHTML = 'OverKill Mode';
