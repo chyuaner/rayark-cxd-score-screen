@@ -33,8 +33,9 @@ body {
     overflow: hidden;
 }
 
-#levinessa-logo {
+#levinessa-logo img{
     color: white;
+    margin-bottom: -1rem;
 /*    float: left;*/
 }
 
@@ -45,18 +46,51 @@ body {
     font-size: 2rem;
 }
 
-#boss-hp, #overkill-bonus {
+#boss-hp-area, #overkill-bonus-area {
+    position: relative;
+    width: 100%;
     padding-top: 0.2rem;
     padding-bottom: 0.2rem;
     margin-bottom: 0.5rem;
+    padding-bottom: 0;
+    padding-top: 0;
+    transition: all 3s ease;
 }
 
-#boss-hp {
+#overkill-bonus-area.hide {
+    height: 0px;
+    overflow: hidden;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 0;
+    transition: all 3s ease;
+}
+
+#boss-hp-area {
     background: rgba(195, 21, 21, 0.35);
 }
+#boss-hp-num {
+  position: relative;
+}
+#boss-hp-area .progressbar {
+  background: rgba(195, 21, 21, 1);
+  position: absolute;
+  line-height: 2em;
+  left: 0px;
+}
 
-#overkill-bonus {
+
+#overkill-bonus-area {
     background: rgba(95, 227, 22, 0.35);
+}
+#overkill-bonus-num {
+  position: relative;
+}
+#overkill-bonus-area .progressbar {
+  background: rgba(95, 227, 22, 1);
+  position: absolute;
+  line-height: 1em;
+  left: 0px;
 }
 
 #score-area {
@@ -89,6 +123,7 @@ footer {
 
 #cxd-logo-area {
     float: right;
+    margin-top: -0.5rem;
 }
 #cxd-logo {
     border: 1px soild white;
