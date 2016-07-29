@@ -4,6 +4,8 @@
 var baseAPIUrl = "//spreadsheets.google.com/feeds/list/1bA_RNgWbS8_K_4UJ5wUkzZd98gNHz2zKj8E0NYxVWhY/ohu83m6/public/values?alt=json";
 
 var updateFreSec = 10000;
+var current_bossHp;
+var current_overKillBonus;
 
 // set timeout
 queryResult();
@@ -33,23 +35,67 @@ function queryResult() {
       var overKillBonus = data.feed.entry[0].gsx$overkill分數.$t;
       var overKillBonusRate = (overKillBonus / overKillMaxBonus) * 100;
       var scheduleText = data.feed.entry[0].gsx$狀況一.$t;
-        
+      var modeText = data.feed.entry[0].gsx$狀況二.$t;
+      
       // 測試用
 //      alert("OK "+data.feed.entry[0].gsx$boss剩餘血.$t);
 //      console.log(data);
         
       // 顯示
-      display_data(scheduleText, bossMaxHp, bossHp, bossHpRate, overKillMaxBonus, overKillBonus, overKillBonusRate);
-      
+      display_data(scheduleText, modeText, bossMaxHp, bossHp, bossHpRate, overKillMaxBonus, overKillBonus, overKillBonusRate);
+      setAshowCombo(bossHp, overKillBonus)
     },
     error: function(data){
-      // 隱藏處理中畫面
-      alert("網路錯誤，請重新整理試試看");
+      location.reload();
     }
   });
 }
 
-function display_data(scheduleText, bossMaxHp, bossHp, bossHpRate, overKillMaxBonus, overKillBonus, overKillBonusRate) {
+function setAshowCombo(bossHp, overKillBonus) {
+  // 介面對應
+  var comboArea = $('#score-combo-area');
+  var combo_bossHp = $('#score-combo-area .boss-hp-text');
+  var combo_overKillBonus = $('#score-combo-area .overkill-bonus-text');
+  combo_bossHp.html(bossHp);
+  combo_overKillBonus.html(overKillBonus);
+  function hideCombo() {comboArea.removeClass("show");}
+  
+  // BOSS Mode
+  if(current_bossHp != 0) {
+    combo_bossHp.css('display', 'inherit');
+    combo_overKillBonus.css('display', 'none');
+    
+    if(current_bossHp != bossHp) {
+      comboArea.addClass('show');
+      window.setTimeout( hideCombo, 4000 );
+//      comboArea.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
+//        function() {
+//            comboArea.removeClass("show");
+//        }
+//      );
+    }
+  }
+  // Overkill Mode
+  else {
+    combo_bossHp.css('display', 'none');
+    combo_overKillBonus.css('display', 'inherit');
+    
+    if(current_overKillBonus != overKillBonus) {
+      comboArea.addClass('show');
+      window.setTimeout( hideCombo, 4000 );
+//      comboArea.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
+//        function() {
+//            comboArea.removeClass("show");
+//        }
+//      );
+    }
+  }
+  
+  current_bossHp = bossHp;
+  current_overKillBonus = overKillBonus;
+}
+
+function display_data(scheduleText, modeText, bossMaxHp, bossHp, bossHpRate, overKillMaxBonus, overKillBonus, overKillBonusRate) {
   // 介面對應
   var mScheduleText = document.getElementById('schedule-text');
   var mModeText = document.getElementById('mode-text');
@@ -70,13 +116,12 @@ function display_data(scheduleText, bossMaxHp, bossHp, bossHpRate, overKillMaxBo
   $('#overkill-bonus-area .progressbar').width(overKillBonusRate+"%");
   
   mScheduleText.innerHTML = scheduleText;
+  mModeText.innerHTML = modeText;
   // OverKill
   if(bossHp == 0) {
-    mModeText.innerHTML = 'OverKill Mode';
     $(mOverkillScoreArea).removeClass("hide");
   }
   else {
-    mModeText.innerHTML = 'BOSS Mode';
     $(mOverkillScoreArea).addClass("hide");
   }
 }
